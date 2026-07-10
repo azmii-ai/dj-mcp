@@ -1,0 +1,9 @@
+[project]
+name = "dj-mcp"
+version = "0.1.0"
+description = "Implementing MCP in Django: Giving AI Agents Secure, Type-Safe Access to Your ORM"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django==5.2",
+]
