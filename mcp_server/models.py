@@ -7,11 +7,11 @@ from django.utils import timezone
 
 class MCPCapability(models.TextChoices):
     # READ: The capability to read data from the MCP.
-    READ_STUDENT = "read:students", "Read student data"
+    READ_STUDENTS = "read:students", "Read student data"
     READ_ANALYTICS = "read:analytics", "Read analytics and metrics"
 
     # WRITE: The capability to write data to the MCP.
-    UPDATE_STUDENT = "update:students", "Update student data"
+    UPDATE_STUDENTS = "update:students", "Update student data"
     CREATE_NOTES = "create:notes", "Add notes to student records"
 
     # ADMIN: The capability to manage the MCP and its users.
@@ -99,9 +99,11 @@ class MCPApiKey(models.Model):
         return raw_key, api_key
 
     @classmethod
-    def authenticate(cls, raw_key: str, tenant_id: int) -> "MCPApiKey | None":
+    def authenticate(cls, raw_key: str, tenant_id: int | None = None) -> "MCPApiKey | None":
         """
-        Authenticates an API key against the stored hash and tenant ID.
+        Authenticates an API key against the stored hash.
+        If tenant_id is provided, the lookup is scoped to that tenant;
+        otherwise the key is found by hash alone (key_hash is globally unique).
         Returns the MCPApiKey instance if valid, otherwise None.
         """
         if not raw_key.startswith("mcp_"):
@@ -110,13 +112,16 @@ class MCPApiKey(models.Model):
         key_prefix = raw_key[:8]
         key_hash = hashlib.sha256(raw_key.encode()).hexdigest()
 
+        lookup = {
+            "key_prefix": key_prefix,
+            "key_hash": key_hash,
+            "is_active": True,
+        }
+        if tenant_id is not None:
+            lookup["tenant_id"] = tenant_id
+
         try:
-            api_key = cls.objects.get(
-                tenant_id=tenant_id,
-                key_prefix=key_prefix,
-                key_hash=key_hash,
-                is_active=True,
-            )
+            api_key = cls.objects.get(**lookup)
             if api_key.expires_at is not None and api_key.expires_at <= timezone.now():
                 return None
             # Update last used timestamp

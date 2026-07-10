@@ -1,8 +1,9 @@
-# mcp_server/tools/base.py
 from abc import ABC, abstractmethod
 from typing import Any, ClassVar, Type
 import logging
 from pydantic import BaseModel
+
+from mcp_server.models import MCPApiKey
 
 logger = logging.getLogger(__name__)
 

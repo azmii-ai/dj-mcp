@@ -1,5 +1,7 @@
+from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path("api/", include("mcp_server.urls")),
+    path("admin/", admin.site.urls),
+    path("mcp/", include("mcp_server.urls")),
 ]
