@@ -1,0 +1,12 @@
+__pycache__/
+*.py[codz]
+*.egg-info/
+.venv/
+.env
+db.sqlite3
+*.log
+.git/
+.vscode/
+.idea/
+.docker/
+postgres_data/
