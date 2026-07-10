@@ -53,6 +53,7 @@ class MCPApiKey(models.Model):
             models.Index(fields=["tenant_id", "key_prefix"]),
         ]
         ordering = ["-created_at"]
+        db_table = "mcp_api_key"
 
     def has_capability(self, capability: str) -> bool:
         if MCPCapability.ADMIN in self.capabilities:
@@ -162,3 +163,4 @@ class MCPApiKeyUsage(models.Model):
             models.Index(fields=["tenant_id", "invoked_at"]),
         ]
         ordering = ["-invoked_at"]
+        db_table = "mcp_api_key_usage"
